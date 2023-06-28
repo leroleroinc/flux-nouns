@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import com.lerolero.nouns.repositories.MongoNounRepository;
+import com.lerolero.nouns.repositories.NounCache;
 import com.lerolero.nouns.models.Noun;
 
 @Service
@@ -18,8 +19,17 @@ public class NounService {
 	@Autowired
 	private MongoNounRepository repo;
 
+	@Autowired
+	private NounCache cache;
+
 	private Mono<String> next() {
-		return repo.pullRandom()
+		return cache.next()
+			.flatMap(n -> {
+				if (n.getPlural() == null) return repo.findById(n.getId());
+				else return Mono.just(n);
+			})
+			.cast(Noun.class)
+			.doOnNext(n -> cache.add(n))
 			.map(n -> n.getPlural());
 	}
 

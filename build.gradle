@@ -21,6 +21,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation('org.redisson:redisson-spring-boot-starter:3.22.0') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-aop'
+	}
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
